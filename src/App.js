@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import http from './services/httpService';
 import config from './config/config.json';
+import logger from './services/loggingService';
 import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
 
@@ -34,11 +35,12 @@ class App extends Component {
 
     this.setState({ posts });
     try {
-      await http.put('s' + config.apiEndpoint + '/' + post.id, post);
+      await http.put(config.apiEndpoint + '/' + post.id, post);
     } catch (error) {
       if (error.response && error.response.status == 404) {
         toast.error("This post does not exist.")
       }
+      logger.log(error);
       posts[index] = { ...originalPost };
       this.setState({ posts });
     }
@@ -49,11 +51,12 @@ class App extends Component {
     const posts = this.state.posts.filter(p => p.id !== post.id);
     this.setState({ posts });
     try {
-      await http.delete(config.apiEndpoint + 's/' + post.id);
+      await http.delete(config.apiEndpoint + '/' + post.id);
     } catch (error) {
       if (error.response && error.response.status == 404) {
         toast.error("This post has already been deleted.");
       }
+      logger.log(error);
       this.setState({ posts: originalPosts });
     }
   };
