@@ -22,14 +22,24 @@ class App extends Component {
   };
 
   handleUpdate = async post => {
-    post.title = "UPDATED";
-    await http.put(config.apiEndpoint + '/' + post.id, post);
-
     const posts = [...this.state.posts];
     const index = posts.indexOf(post);
+
+    const originalPost = { ...posts[index] };
+
+    post.title = "UPDATED";
     posts[index] = { ...post };
 
     this.setState({ posts });
+    try {
+      await http.put(config.apiEndpoint + '/' + post.id, post);
+    } catch (error) {
+      if (error.response && error.response.status == 404) {
+        alert("This post does not exist")
+      }
+      posts[index] = { ...originalPost };
+      this.setState({ posts });
+    }
   };
 
   handleDelete = async post => {
