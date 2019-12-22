@@ -34,7 +34,7 @@ class App extends Component {
 
     this.setState({ posts });
     try {
-      await http.put(config.apiEndpoint + '/' + post.id, post);
+      await http.put('s' + config.apiEndpoint + '/' + post.id, post);
     } catch (error) {
       if (error.response && error.response.status == 404) {
         toast.error("This post does not exist.")
